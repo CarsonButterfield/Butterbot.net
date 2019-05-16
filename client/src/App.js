@@ -4,7 +4,10 @@ import axios from "axios";
 class App extends Component {
   // initialize our state
   state = {
+    messageData: [],
     data: [],
+    voiceData: [],
+    guild: null,
     id: 0,
     message: null,
     intervalIsSet: false,
@@ -40,14 +43,18 @@ class App extends Component {
 
   // our first get method that uses our backend api to
   // fetch data from our data base
-  getDataFromDb = () => {
-console.log('got data')
-    fetch("http://localhost:3001/api/getData")
+  getDataFromDb = (params) => {
+if(!params){return}
+    fetch("http://localhost:3001/api/popularChannels?"+params)
       .then(data => data.json())
-      .then(res => this.setState({ data: res.data }))
-        //this.setState({ data: res.data },)
+      .then(function(res){
+        if(res.messageData){this.setState({ messageData: res.messageData })}
+        if(res.voiceData){this.setState({voiceData: res.voiceData})}
+        })
+
 
   };
+
 
   // our put method that uses our backend api
   // to create new query into our data base
@@ -125,12 +132,12 @@ console.log('got data')
         <div style={{ padding: "10px" }}>
           <input
             type="text"
-            onChange={e => this.setState({ message: e.target.value })}
+            onChange={e => this.setState({ guild: e.target.value })}
             placeholder="Get a Guild from the Database"
             style={{ width: "200px" }}
           />
-          <button onClick={() => this.putDataToDB(this.state.message)}>
-            PUT
+          <button onClick={() => this.getDataFromDb("db=136337269291220993&logType=voiceLogs")}>
+            Paramtest
           </button>
         </div>
         <div style={{ padding: "10px" }}>
@@ -140,7 +147,7 @@ console.log('got data')
             onChange={e => this.setState({ idToDelete: e.target.value })}
             placeholder="put id of item to delete here"
           />
-          <button onClick={() => this.getDataFromDb()}>
+          <button onClick={() => this.getDataFromDb("db=177632987331035136&logType=messageLogs")}>
             GET
           </button>
         </div>
